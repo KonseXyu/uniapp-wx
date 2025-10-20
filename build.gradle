@@ -1,0 +1,80 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.6'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.miniprogram'
+version = '0.0.1-SNAPSHOT'
+description = 'uniapp-wx'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springAiVersion', "1.0.3")
+    springModulithVersion = "1.4.3"
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'jakarta.servlet:jakarta.servlet-api'
+//    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5'
+//    implementation 'org.springframework.ai:spring-ai-starter-model-anthropic'
+
+    // MyBatis-Plus (适配Spring Boot 3.x)
+    implementation 'com.baomidou:mybatis-plus-spring-boot3-starter:3.5.14'
+    // ⭐⭐⭐ 分页插件必需依赖（v3.5.9+）⭐⭐⭐
+    implementation 'com.baomidou:mybatis-plus-jsqlparser:3.5.14'
+
+//    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+//    implementation 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+    implementation 'org.springframework.boot:spring-boot-configuration-processor'
+//    implementation 'com.netflix.graphql.dgs.codegen:graphql-dgs-codegen-gradle:7.0.3'
+    implementation 'org.springframework.modulith:spring-modulith-starter-core'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.modulith:spring-modulith-starter-jdbc'
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+    // Apache Commons
+    implementation 'org.apache.commons:commons-lang3:3.17.0'
+
+    // Hutool (可选，工具类库)
+    implementation 'cn.hutool:hutool-all:5.8.34'
+
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.baomidou:mybatis-plus-spring-boot3-starter-test:3.5.14'
+    testImplementation 'org.springframework.security:spring-security-test'
+    runtimeOnly 'org.springframework.boot:spring-boot-docker-compose'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+        mavenBom "org.springframework.modulith:spring-modulith-bom:$springModulithVersion"
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

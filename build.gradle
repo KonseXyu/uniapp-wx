@@ -24,11 +24,12 @@ ext {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'jakarta.servlet:jakarta.servlet-api'
 //    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5'
 //    implementation 'org.springframework.ai:spring-ai-starter-model-anthropic'
-
+//    implementation 'com.alibaba.fastjson:fastjson:1.2.83'
     // MyBatis-Plus (适配Spring Boot 3.x)
     implementation 'com.baomidou:mybatis-plus-spring-boot3-starter:3.5.14'
     // ⭐⭐⭐ 分页插件必需依赖（v3.5.9+）⭐⭐⭐
@@ -51,6 +52,7 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
+    implementation 'org.hibernate.validator:hibernate-validator'
     // Apache Commons
     implementation 'org.apache.commons:commons-lang3:3.17.0'
 

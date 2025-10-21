@@ -1,7 +1,9 @@
 package com.miniprogram.uniappwx.exception;
 
 
-import com.miniprogram.uniappwx.dto.Result;
+import com.miniprogram.uniappwx.common.Result;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +34,18 @@ public class GlobalExceptionHandler {
 	public Result<Void> handleRuntimeException(RuntimeException e) {
 		log.error("运行时异常: ", e);
 		return Result.error(e.getMessage());
+	}
+
+	/**
+	 * 处理约束违反异常
+	 */
+	@ExceptionHandler(ConstraintViolationException.class)
+	public Result<?> handleConstraintViolationException(ConstraintViolationException e) {
+		Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+		String message = violations.isEmpty() ? "参数校验失败" :
+				violations.iterator().next().getMessage();
+		log.error("约束违反异常: {}", message);
+		return Result.error(400, message);
 	}
 
 	/**

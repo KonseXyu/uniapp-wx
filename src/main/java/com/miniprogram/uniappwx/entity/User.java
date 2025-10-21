@@ -1,40 +1,30 @@
 package com.miniprogram.uniappwx.entity;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
+
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
+// ============ User实体 ============
 @Data
 @TableName("user")
-public class User implements Serializable {
-	private static final long serialVersionUID = 1L;
-
-	@TableId(value = "id", type = IdType.AUTO)
+public class User {
+	@TableId(type = IdType.AUTO)
 	private Long id;
 
-	private String username;
+	private String openid;
 
-	private String password;
+	private String unionid;
+
+	private String phone;
 
 	private String nickname;
 
 	private String avatar;
 
-	private String phone;
-
-	private String role;
-
-	private Integer status;
-
-	@TableField("create_time")
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@TableField(fill = FieldFill.INSERT)
 	private LocalDateTime createTime;
 
-	@TableField("update_time")
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@TableField(fill = FieldFill.INSERT_UPDATE)
 	private LocalDateTime updateTime;
 }

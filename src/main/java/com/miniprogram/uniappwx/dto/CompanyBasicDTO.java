@@ -10,5 +10,10 @@ public class CompanyBasicDTO {
 	@NotBlank(message = "主要联系电话不能为空")
 	private String primaryPhone;
 
+	@NotBlank(message = "主要联系人姓名不能为空")
+	private String primaryName;
+
 	private String backupPhone;
+
+	private String backupName;
 }

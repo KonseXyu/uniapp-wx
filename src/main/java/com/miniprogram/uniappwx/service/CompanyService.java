@@ -52,7 +52,9 @@ public class CompanyService {
 			company = existing;
 			company.setCompanyName(dto.getCompanyName());
 			company.setPrimaryPhone(dto.getPrimaryPhone());
+			company.setPrimaryName(dto.getPrimaryName());
 			company.setBackupPhone(dto.getBackupPhone());
+			company.setBackupName(dto.getBackupName());
 			companyBasicMapper.updateById(company);
 		} else {
 			// 新增
@@ -61,13 +63,17 @@ public class CompanyService {
 			company.setCompanyName(dto.getCompanyName());
 			company.setPrimaryPhone(dto.getPrimaryPhone());
 			company.setBackupPhone(dto.getBackupPhone());
+			company.setPrimaryName(dto.getPrimaryName());
+			company.setBackupName(dto.getBackupName());
 			companyBasicMapper.insert(company);
 		}
 
 		CompanyBasicVO vo = new CompanyBasicVO();
 		vo.setCompanyId(company.getId());
 		vo.setCompanyName(company.getCompanyName());
+		vo.setPrimaryName(company.getPrimaryName());
 		vo.setPrimaryPhone(company.getPrimaryPhone());
+		vo.setBackupName(company.getBackupName());
 		vo.setBackupPhone(company.getBackupPhone());
 
 		return vo;
@@ -152,6 +158,14 @@ public class CompanyService {
 		vo.setCompanyId(basic.getId());
 		vo.setCompanyName(basic.getCompanyName());
 		vo.setPrimaryPhone(basic.getPrimaryPhone());
+		vo.setPrimaryName(basic.getPrimaryName());
+		if(basic.getBackupPhone() != null) {
+			vo.setBackupPhone(basic.getBackupPhone());
+		}
+		if (basic.getBackupName() != null) {
+			vo.setBackupName(basic.getBackupName());
+		}
+
 
 		if (detail != null) {
 			vo.setIndustry(detail.getIndustry());

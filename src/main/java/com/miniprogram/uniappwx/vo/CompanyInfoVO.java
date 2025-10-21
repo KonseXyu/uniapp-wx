@@ -6,7 +6,10 @@ import lombok.Data;
 public class CompanyInfoVO {
 	private Long companyId;
 	private String primaryPhone;
+	private String primaryName;
 	private String companyName;
 	private String industry;
 	private String employeeCount;
+	private String backupPhone;
+	private String backupName;
 }

@@ -17,7 +17,11 @@ public class CompanyBasic {
 
 	private String primaryPhone;
 
+	private String primaryName;
+
 	private String backupPhone;
+
+	private String backupName;
 
 	@TableField(fill = FieldFill.INSERT)
 	private LocalDateTime createTime;

@@ -95,25 +95,25 @@ public class InsuranceMatchService {
 		double totalScore = 0;
 		List<String> reasons = new ArrayList<>();
 
-		// 1. 行业匹配 (权重20%)
+		// 1. 行业匹配 (权重30%)
 		double industryScore = matchField(
 				company.getIndustry(),
 				product.getTargetIndustry(),
 				"行业匹配"
 		);
 		if (industryScore > 0) {
-			totalScore += industryScore * 0.2;
+			totalScore += industryScore * 0.3;
 			reasons.add("行业高度匹配");
 		}
 
-		// 2. 成立年限匹配 (权重10%)
+		// 2. 成立年限匹配 (权重5%)
 		double yearsScore = matchField(
 				company.getEstablishedYears(),
 				product.getTargetYears(),
 				"成立年限匹配"
 		);
 		if (yearsScore > 0) {
-			totalScore += yearsScore * 0.1;
+			totalScore += yearsScore * 0.05;
 			reasons.add("成立年限符合要求");
 		}
 
@@ -124,7 +124,7 @@ public class InsuranceMatchService {
 				"员工规模匹配"
 		);
 		if (employeeScore > 0) {
-			totalScore += employeeScore * 0.1;
+			totalScore += employeeScore * 0.10;
 			reasons.add("员工规模符合");
 		}
 
@@ -139,14 +139,14 @@ public class InsuranceMatchService {
 			reasons.add("营业额范围适合");
 		}
 
-		// 5. 注册资本匹配 (权重10%)
+		// 5. 注册资本匹配 (权重5%)
 		double capitalScore = matchField(
 				company.getRegisteredCapital(),
 				product.getTargetCapital(),
 				"注册资本匹配"
 		);
 		if (capitalScore > 0) {
-			totalScore += capitalScore * 0.1;
+			totalScore += capitalScore * 0.05;
 		}
 
 		// 6. 主要资产匹配 (权重10%)
@@ -171,10 +171,15 @@ public class InsuranceMatchService {
 		// 8. 进出口贸易匹配 (权重5%)
 		if (StrUtil.isNotBlank(product.getTargetImportExport()) &&
 				product.getTargetImportExport().equals(company.getHasImportExport())) {
-			totalScore += 0.05;
-			if ("是".equals(company.getHasImportExport())) {
+            if("不限进出口贸易".equals(company.getHasImportExport())){
+                totalScore += 0.01;
+            } else if ("是".equals(company.getHasImportExport())) {
+                totalScore += 0.05;
 				reasons.add("支持进出口贸易企业");
-			}
+			} else{
+                totalScore += 0.05;
+                reasons.add("不支持进出口贸易企业");
+            }
 		}
 
 		// 9. 风险覆盖匹配 (权重10%)
@@ -198,7 +203,6 @@ public class InsuranceMatchService {
 
 		// 转换为百分制
 		double finalScore = Math.min(totalScore * 100, 100);
-
 		String reasonText = reasons.isEmpty() ?
 				"基本符合企业保险需求" :
 				String.join("；", reasons);
@@ -216,10 +220,24 @@ public class InsuranceMatchService {
 
 		// 将产品目标拆分为列表
 		List<String> targets = Arrays.asList(productTargets.split(","));
+        if ("不限年限".equals(companyValue.trim())){
+            return  (double)targets.size();
+        }
+        if ("不限人数".equals(companyValue.trim())){
+            return  (double)targets.size();
+        }
 
-		// 检查企业值是否在目标列表中
-		return targets.contains(companyValue.trim()) ? 1.0 : 0;
-	}
+        if ("不限金额".equals(companyValue.trim())){
+            return  (double)targets.size();
+        }
+        if ("不限行业".equals(companyValue.trim())){
+            return  (double) targets.size();
+        }
+        if (targets.contains(companyValue.trim())){
+            return 1.0;
+        }
+        return 0.0;
+    }
 
 	/**
 	 * 多选字段匹配（计算交集占比）
@@ -228,7 +246,7 @@ public class InsuranceMatchService {
 		if (StrUtil.isBlank(companyValues) || StrUtil.isBlank(productTargets)) {
 			return 0;
 		}
-
+        double score = 0.0;
 		Set<String> companySet = new HashSet<>(Arrays.asList(companyValues.split(",")));
 		Set<String> productSet = new HashSet<>(Arrays.asList(productTargets.split(",")));
 
@@ -236,16 +254,27 @@ public class InsuranceMatchService {
 		companySet = companySet.stream().map(String::trim).collect(Collectors.toSet());
 		productSet = productSet.stream().map(String::trim).collect(Collectors.toSet());
 
-		// 计算交集
-		Set<String> intersection = new HashSet<>(companySet);
-		intersection.retainAll(productSet);
 
-		// 返回交集占企业需求的比例
-		if (companySet.isEmpty()) {
-			return 0;
-		}
+        for (String companyValue : companySet) {
+            if ("不限资产".equals(companyValue)) {
+                score=0.0;
+                score=productSet.size();
+                break;
+            }
+            if ("不限场景".equals(companyValue)) {
+                score=0.0;
+                score=productSet.size();
+                break;
+            }
 
-		return (double) intersection.size() / companySet.size();
+
+            if(productSet.contains(companyValue)){
+                score+=1;
+            }
+
+        }
+
+		return (double) score;
 	}
 
 	/**

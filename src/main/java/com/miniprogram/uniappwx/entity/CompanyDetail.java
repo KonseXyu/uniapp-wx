@@ -39,6 +39,8 @@ public class CompanyDetail {
 
 	private String annualBudget;
 
+	private String insuranceType;
+
 	@TableField(fill = FieldFill.INSERT)
 	private LocalDateTime createTime;
 

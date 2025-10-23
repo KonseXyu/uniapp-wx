@@ -8,6 +8,7 @@ public class CompanyDetailVO {
 	private Long companyId;
 	CompanyBasicVO  companyBasicVO;
 	private String industry;
+	private String insuranceType;
 	private String mainAssets;
 	private String establishedYears;
 	private String employeeCount;

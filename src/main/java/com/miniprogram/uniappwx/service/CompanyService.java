@@ -106,6 +106,7 @@ public class CompanyService {
 
 		// 设置详细信息
 		detail.setIndustry(dto.getIndustry());
+		detail.setInsuranceType(dto.getInsuranceType());
 		detail.setMainAssets(listToString(dto.getMainAssets()));
 		detail.setEstablishedYears(dto.getEstablishedYears());
 		detail.setEmployeeCount(dto.getEmployeeCount());

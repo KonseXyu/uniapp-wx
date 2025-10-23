@@ -14,7 +14,8 @@ public class CompanyDetailDTO {
 	@NotBlank(message = "所属行业不能为空")
 	private String industry;
 
-	private List<String> mainAssets;
+	@NotBlank(message = "期望保险类型不能为空")
+	private String insuranceType;
 
 	@NotBlank(message = "成立年限不能为空")
 	private String establishedYears;
@@ -28,10 +29,12 @@ public class CompanyDetailDTO {
 	@NotBlank(message = "注册资本金不能为空")
 	private String registeredCapital;
 
-	private List<String> specialEquipment;
-
 	@NotBlank(message = "是否涉及进出口贸易不能为空")
 	private String hasImportExport;
+
+	private List<String> mainAssets;
+
+	private List<String> specialEquipment;
 
 	private List<String> purchasedInsurance;
 

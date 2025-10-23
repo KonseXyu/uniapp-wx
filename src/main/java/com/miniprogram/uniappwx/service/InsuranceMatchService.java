@@ -45,30 +45,49 @@ public class InsuranceMatchService {
 		if (detail == null) {
 			throw new RuntimeException("企业详细信息不存在");
 		}
-
+        String InsuranceType=detail.getInsuranceType();//保险类型
+        String EmployeeCount=detail.getEmployeeCount();//员工规模
+        String Industry=detail.getIndustry();//所属行业
+        String EstablishedYears=detail.getEstablishedYears();//成立年限
+        String AnnualRevenue=detail.getAnnualRevenue();//营业额
+        String RegisteredCapital=detail.getRegisteredCapital();//注册资本
 		// 2. 获取所有保险产品
 		List<InsuranceProduct> allProducts = insuranceProductMapper.selectList(null);
+
 
 		// 3. 计算每个产品的匹配度
 		List<InsuranceMatchVO> matchList = new ArrayList<>();
 		for (InsuranceProduct product : allProducts) {
-			MatchResult matchResult = calculateMatchScore(detail, product);
+            if (InsuranceType.equals(product.getInsuranceType())){
+                if (EmployeeCount.equals(product.getTargetEmployees())){
+                    if (Industry.equals(product.getTargetIndustry())){
+                        if (RegisteredCapital.equals(product.getTargetCapital())){
+                            if (EstablishedYears.equals(product.getTargetYears())){
+                                if (AnnualRevenue.equals(product.getTargetRevenue())){
+                                    MatchResult matchResult = calculateMatchScore(detail, product);
+                                    System.out.println(matchResult.getScore());
+                                    InsuranceMatchVO vo = new InsuranceMatchVO();
+                                    vo.setId(product.getId());
+                                    vo.setInsuranceName(product.getInsuranceName());
+                                    vo.setCompanyName(product.getCompanyName());
+                                    vo.setInsuranceType(product.getInsuranceType());
+                                    vo.setAnnualFee(product.getAnnualFee());
+                                    vo.setContactName(product.getInsuranceContactName());
+                                    vo.setContactPhone(product.getInsuranceContactPhone());
+                                    vo.setMatchScore(matchResult.getScore());
+                                    vo.setMatchReason(matchResult.getReason());
 
-			InsuranceMatchVO vo = new InsuranceMatchVO();
-			vo.setId(product.getId());
-			vo.setInsuranceName(product.getInsuranceName());
-			vo.setCompanyName(product.getCompanyName());
-			vo.setInsuranceType(product.getInsuranceType());
-			vo.setAnnualFee(product.getAnnualFee());
-			vo.setContactName(product.getInsuranceContactName());
-			vo.setContactPhone(product.getInsuranceContactPhone());
-			vo.setMatchScore(matchResult.getScore());
-			vo.setMatchReason(matchResult.getReason());
+                                    matchList.add(vo);
 
-			matchList.add(vo);
+                                    // 保存匹配记录
+                                    saveMatchRecord(companyId, product.getId(), matchResult);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-			// 保存匹配记录
-			saveMatchRecord(companyId, product.getId(), matchResult);
 		}
 
 		// 4. 按匹配度排序
@@ -94,15 +113,20 @@ public class InsuranceMatchService {
 	private MatchResult calculateMatchScore(CompanyDetail company, InsuranceProduct product) {
 		double totalScore = 0;
 		List<String> reasons = new ArrayList<>();
-
-		// 1. 行业匹配 (权重30%)
+        //保险类别匹配(权重15%)
+        double insuranceType=matchField(company.getPurchasedInsurance(),product.getInsuranceType(),"保险匹配");
+        if (insuranceType > 0) {
+            totalScore += insuranceType * 0.15;
+            reasons.add("保险高度匹配");
+        }
+		// 1. 行业匹配 (权重10%)
 		double industryScore = matchField(
 				company.getIndustry(),
 				product.getTargetIndustry(),
 				"行业匹配"
 		);
 		if (industryScore > 0) {
-			totalScore += industryScore * 0.3;
+			totalScore += industryScore * 0.1;
 			reasons.add("行业高度匹配");
 		}
 
@@ -200,6 +224,15 @@ public class InsuranceMatchService {
 		if (potentialRiskScore > 0) {
 			totalScore += potentialRiskScore * 0.05;
 		}
+        //目标购买过的保险匹配(权重5%)
+        double purchaseInsurance=matchMultiField(
+                company.getPurchasedInsurance(),
+                product.getCoveredInsuranceTypes()
+        );
+        if (purchaseInsurance > 0) {
+            totalScore += purchaseInsurance * 0.05;
+            reasons.add("保险高度匹配");
+        }
 
 		// 转换为百分制
 		double finalScore = Math.min(totalScore * 100, 100);
@@ -233,6 +266,7 @@ public class InsuranceMatchService {
         if ("不限行业".equals(companyValue.trim())){
             return  (double) targets.size();
         }
+
         if (targets.contains(companyValue.trim())){
             return 1.0;
         }
@@ -265,6 +299,11 @@ public class InsuranceMatchService {
                 score=0.0;
                 score=productSet.size();
                 break;
+            }
+            if ("不限此项".equals(companyValue.trim())){
+               score=0.0;
+               score=productSet.size();
+               break;
             }
 
 
@@ -318,7 +357,6 @@ public class InsuranceMatchService {
 		if (product == null) {
 			throw new RuntimeException("保险产品不存在");
 		}
-
 		InsuranceDetailVO vo = new InsuranceDetailVO();
 		vo.setId(product.getId());
 		vo.setInsuranceName(product.getInsuranceName());

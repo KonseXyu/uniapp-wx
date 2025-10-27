@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Slf4j
 @Service
@@ -27,6 +29,60 @@ public class InsuranceMatchService {
 
 	@Resource
 	private MatchRecordMapper matchRecordMapper;
+
+	@Resource
+	private InsuranceFavoriteMapper favoriteMapper;
+	/**
+	 * 浏览所有保险产品
+	 */
+	public List<InsuranceListVO> listAllInsurance() {
+		List<InsuranceProduct> products = insuranceProductMapper.selectList(null);
+
+		return products.stream().map(product -> {
+			InsuranceListVO vo = new InsuranceListVO();
+			vo.setId(product.getId());
+			vo.setInsuranceName(product.getInsuranceName());
+			vo.setCompanyName(product.getCompanyName());
+			vo.setInsuranceType(product.getInsuranceType());
+			vo.setAnnualFee(product.getAnnualFee());
+			vo.setContactName(product.getInsuranceContactName());
+			vo.setContactPhone(product.getInsuranceContactPhone());
+			vo.setIsFavorited(false); // 默认未收藏，前端可单独查询
+			return vo;
+		}).collect(Collectors.toList());
+	}
+
+	/**
+	 * 根据筛选条件匹配保险（不保存记录）
+	 */
+	public List<InsuranceMatchVO> matchInsuranceByFilter(CompanyDetail filter) {
+		// 获取所有保险产品
+		List<InsuranceProduct> allProducts = insuranceProductMapper.selectList(null);
+
+		// 计算每个产品的匹配度
+		List<InsuranceMatchVO> matchList = new ArrayList<>();
+		for (InsuranceProduct product : allProducts) {
+			MatchResult matchResult = calculateMatchScore(filter, product);
+
+			InsuranceMatchVO vo = new InsuranceMatchVO();
+			vo.setId(product.getId());
+			vo.setInsuranceName(product.getInsuranceName());
+			vo.setCompanyName(product.getCompanyName());
+			vo.setInsuranceType(product.getInsuranceType());
+			vo.setAnnualFee(product.getAnnualFee());
+			vo.setContactName(product.getInsuranceContactName());
+			vo.setContactPhone(product.getInsuranceContactPhone());
+			vo.setMatchScore(matchResult.getScore());
+			vo.setMatchReason(matchResult.getReason());
+
+			matchList.add(vo);
+		}
+
+		// 按匹配度排序
+		matchList.sort((a, b) -> Double.compare(b.getMatchScore(), a.getMatchScore()));
+
+		return matchList;
+	}
 
 	/**
 	 * 匹配保险产品
@@ -389,5 +445,87 @@ public class InsuranceMatchService {
 			return new ArrayList<>();
 		}
 		return Arrays.asList(str.split(","));
+	}
+
+	/**
+	 * 添加收藏
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void addFavorite(Long userId, Long insuranceId) {
+		// 检查是否已收藏
+		Long count = favoriteMapper.selectCount(
+				new LambdaQueryWrapper<InsuranceFavorite>()
+						.eq(InsuranceFavorite::getUserId, userId)
+						.eq(InsuranceFavorite::getInsuranceId, insuranceId)
+		);
+
+		if (count > 0) {
+			throw new RuntimeException("已经收藏过该保险产品");
+		}
+
+		InsuranceFavorite favorite = new InsuranceFavorite();
+		favorite.setUserId(userId);
+		favorite.setInsuranceId(insuranceId);
+		favoriteMapper.insert(favorite);
+	}
+
+	/**
+	 * 取消收藏
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void removeFavorite(Long userId, Long insuranceId) {
+		favoriteMapper.delete(
+				new LambdaQueryWrapper<InsuranceFavorite>()
+						.eq(InsuranceFavorite::getUserId, userId)
+						.eq(InsuranceFavorite::getInsuranceId, insuranceId)
+		);
+	}
+
+	/**
+	 * 获取我的收藏列表
+	 */
+	public List<InsuranceListVO> getMyFavorites(Long userId) {
+		// 查询收藏的保险ID列表
+		List<InsuranceFavorite> favorites = favoriteMapper.selectList(
+				new LambdaQueryWrapper<InsuranceFavorite>()
+						.eq(InsuranceFavorite::getUserId, userId)
+						.orderByDesc(InsuranceFavorite::getCreateTime)
+		);
+
+		if (favorites.isEmpty()) {
+			return new ArrayList<>();
+		}
+
+		List<Long> insuranceIds = favorites.stream()
+				.map(InsuranceFavorite::getInsuranceId)
+				.collect(Collectors.toList());
+
+		// 查询保险产品信息
+		List<InsuranceProduct> products = insuranceProductMapper.selectBatchIds(insuranceIds);
+
+		return products.stream().map(product -> {
+			InsuranceListVO vo = new InsuranceListVO();
+			vo.setId(product.getId());
+			vo.setInsuranceName(product.getInsuranceName());
+			vo.setCompanyName(product.getCompanyName());
+			vo.setInsuranceType(product.getInsuranceType());
+			vo.setAnnualFee(product.getAnnualFee());
+			vo.setContactName(product.getInsuranceContactName());
+			vo.setContactPhone(product.getInsuranceContactPhone());
+			vo.setIsFavorited(true);
+			return vo;
+		}).collect(Collectors.toList());
+	}
+
+	/**
+	 * 检查是否已收藏
+	 */
+	public boolean checkFavorite(Long userId, Long insuranceId) {
+		Long count = favoriteMapper.selectCount(
+				new LambdaQueryWrapper<InsuranceFavorite>()
+						.eq(InsuranceFavorite::getUserId, userId)
+						.eq(InsuranceFavorite::getInsuranceId, insuranceId)
+		);
+		return count > 0;
 	}
 }

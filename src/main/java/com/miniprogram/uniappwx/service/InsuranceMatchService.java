@@ -84,7 +84,7 @@ public class InsuranceMatchService {
                                     if (flag==0){
                                         continue;
                                     }
-                                   com.miniprogram.uniappwx.vo.InsuranceMatchVO vo = new com.miniprogram.uniappwx.vo.InsuranceMatchVO();
+                                    InsuranceMatchVO vo = new com.miniprogram.uniappwx.vo.InsuranceMatchVO();
                                     vo.setId(product.getId());
                                     vo.setInsuranceName(product.getInsuranceName());
                                     vo.setCompanyName(product.getCompanyName());

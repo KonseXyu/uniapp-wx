@@ -16,34 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `feedback`
---
-
-DROP TABLE IF EXISTS `feedback`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `feedback` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `feedback_id` bigint NOT NULL,
-  `feedback_info` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `feedback_id` (`feedback_id`) USING BTREE,
-  CONSTRAINT `feedback_ibfk_1` FOREIGN KEY (`feedback_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `feedback`
---
-
-LOCK TABLES `feedback` WRITE;
-/*!40000 ALTER TABLE `feedback` DISABLE KEYS */;
-INSERT INTO `feedback` VALUES (1,3,'aaaaaaa','2025-10-27 13:34:53'),(3,3,'这是一条反馈内容',NULL),(4,3,'这是1111111111111111一条反馈内容',NULL),(5,3,'这是111111111112222211111一条反馈内容',NULL),(6,3,'这是11111331111112222211111一条反馈内容','2025-10-27 14:20:04');
-/*!40000 ALTER TABLE `feedback` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `gen_table`
 --
 
@@ -1076,6 +1048,34 @@ LOCK TABLES `tbl_company_detail` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `tbl_feedback`
+--
+
+DROP TABLE IF EXISTS `tbl_feedback`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tbl_feedback` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `feedback_id` bigint NOT NULL,
+  `feedback_info` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `feedback_id` (`feedback_id`) USING BTREE,
+  CONSTRAINT `tbl_feedback_ibfk_1` FOREIGN KEY (`feedback_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tbl_feedback`
+--
+
+LOCK TABLES `tbl_feedback` WRITE;
+/*!40000 ALTER TABLE `tbl_feedback` DISABLE KEYS */;
+INSERT INTO `tbl_feedback` VALUES (1,3,'aaaaaaa','2025-10-27 13:34:53'),(3,3,'这是一条反馈内容',NULL),(4,3,'这是1111111111111111一条反馈内容',NULL),(5,3,'这是111111111112222211111一条反馈内容',NULL),(6,3,'这是11111331111112222211111一条反馈内容','2025-10-27 14:20:04');
+/*!40000 ALTER TABLE `tbl_feedback` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `tbl_insurance_favorite`
 --
 
@@ -1224,4 +1224,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-28 14:40:06
+-- Dump completed on 2025-10-28 14:54:13

@@ -9,24 +9,30 @@ import java.time.LocalDateTime;
 @TableName("tbl_feedback")
 public class Feedback {
 
-    @TableId(type = IdType.AUTO)
-    private Long id;
+	@TableId(type = IdType.AUTO)
+	private Long id;
 
-    /**
-     * 关联用户表的id
-     */
-    @TableField("feedback_id")
-    private Long feedbackId;
+	/**
+	 * 关联用户表的id
+	 */
+	@TableField("user_id")
+	private Long userId;
 
-    /**
-     * 反馈内容
-     */
-    @TableField("feedback_info")
-    private String feedbackInfo;
+	/**
+	 * 反馈类型：功能问题/界面问题/产品建议/其他
+	 */
+	@TableField("feedback_type")
+	private String feedbackType;
 
-    /**
-     * 反馈创建时间
-     */
-    @TableField(value = "created_at", fill = FieldFill.INSERT)
-    private LocalDateTime createdAt;
+	/**
+	 * 反馈内容
+	 */
+	@TableField("feedback_info")
+	private String feedbackInfo;
+
+	/**
+	 * 反馈创建时间
+	 */
+	@TableField(value = "created_at", fill = FieldFill.INSERT)
+	private LocalDateTime createdAt;
 }

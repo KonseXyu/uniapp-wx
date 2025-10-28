@@ -2,7 +2,7 @@ package com.miniprogram.uniappwx.service;
 
 
 import com.miniprogram.uniappwx.entity.Feedback;
-import com.miniprogram.uniappwx.mapper.FeedBackMapper;
+import com.miniprogram.uniappwx.mapper.FeedbackMapper;
 
 import com.miniprogram.uniappwx.vo.FeedbackVO;
 import jakarta.annotation.Resource;
@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class FeedBackService {
     @Resource
-    private FeedBackMapper feedBackMapper;
+    private FeedbackMapper feedBackMapper;
     //根据用户id查询所在名下的所有反馈信息
     public List<FeedbackVO> getUserFeedbackList(Long userId) {
         return feedBackMapper.selectUserFeedback(userId);

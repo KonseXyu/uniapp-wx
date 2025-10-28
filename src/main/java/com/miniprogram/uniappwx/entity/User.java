@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 // ============ User实体 ============
 @Data
-@TableName("user")
+@TableName("tbl_user")
 public class User {
 	@TableId(type = IdType.AUTO)
 	private Long id;

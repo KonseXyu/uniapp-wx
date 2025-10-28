@@ -5,27 +5,19 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * 保险收藏表
+ */
 @Data
-@TableName("tbl_company_basic")
-public class CompanyBasic {
+@TableName("tbl_insurance_favorite")
+public class InsuranceFavorite {
 	@TableId(type = IdType.AUTO)
 	private Long id;
 
 	private Long userId;
 
-	private String companyName;
-
-	private String primaryPhone;
-
-	private String primaryName;
-
-	private String backupPhone;
-
-	private String backupName;
+	private Long insuranceId;
 
 	@TableField(fill = FieldFill.INSERT)
 	private LocalDateTime createTime;
-
-	@TableField(fill = FieldFill.INSERT_UPDATE)
-	private LocalDateTime updateTime;
 }

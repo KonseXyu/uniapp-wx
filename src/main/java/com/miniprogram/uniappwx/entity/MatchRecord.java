@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("match_record")
+@TableName("tbl_match_record")
 public class MatchRecord {
 	@TableId(type = IdType.AUTO)
 	private Long id;

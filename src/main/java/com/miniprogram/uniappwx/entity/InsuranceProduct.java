@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 
 @Data
-@TableName("insurance_product")
+@TableName("tbl_insurance_product")
 public class InsuranceProduct {
 	@TableId(type = IdType.AUTO)
 	private Long id;
